@@ -78,6 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span><i class="far fa-folder"></i> ${c.category}</span>
                         <span><i class="far fa-calendar"></i> ${c.date}</span>
                     </div>
+                    ${c.reply ? `
+                        <div class="admin-reply">
+                            <i class="fas fa-reply fa-rotate-180"></i>
+                            <div class="reply-content">
+                                <strong>System Response:</strong> ${c.reply}
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
                 <div class="status-badge ${statusClass}">${statusLabel}</div>
             `;

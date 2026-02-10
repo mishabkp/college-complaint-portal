@@ -449,3 +449,34 @@ footer {
     color: var(--text-muted);
     font-size: 0.875rem;
 }
+
+/* Admin Reply Styling */
+.admin-reply {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--primary-light);
+    border-left: 4px solid var(--primary);
+    border-radius: 4px;
+    font-size: 0.875rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.admin-reply i {
+    color: var(--primary-dark);
+    margin-top: 3px;
+}
+
+.reply-content {
+    color: var(--text-dark);
+}
+
+.reply-content strong {
+    color: var(--primary-dark);
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}

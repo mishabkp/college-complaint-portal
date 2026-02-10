@@ -64,6 +64,22 @@
                 </table>
             </div>
         </div>
+
+        <!-- Reply Modal -->
+        <div id="replyModal" class="modal">
+            <div class="modal-content">
+                <h3>Admin Reply</h3>
+                <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);">Provide an update or resolution message for this complaint.</p>
+                <input type="hidden" id="currentReplyId">
+                <div class="form-group">
+                    <textarea id="replyText" rows="4" placeholder="Type your response here..." style="width: 100%;"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="closeReplyModal()">Cancel</button>
+                    <button class="btn btn-primary" style="flex: 1;" onclick="submitReply()">Send Reply</button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script type="module" src="admin.js"></script>
