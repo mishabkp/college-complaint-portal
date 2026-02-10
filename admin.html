@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Voice Complaint Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body style="background-color: #f3f4f6;">
+    <nav>
+        <div class="logo">
+            <span class="logo-icon"><i class="fas fa-lock"></i></span>
+            Admin Console
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Back to Site</a>
+        </div>
+        <button class="btn btn-secondary" id="logoutBtn" style="display: none;" onclick="handleLogout()">Logout</button>
+    </nav>
+
+    <main class="section">
+        <!-- Login Form -->
+        <div id="adminLoginSection" style="max-width: 400px; margin: 4rem auto;">
+            <div class="card">
+                <h2 style="margin-bottom: 1.5rem; text-align: center;">Authorized Access</h2>
+                <div class="form-group">
+                    <label>Admin Password</label>
+                    <input type="password" id="adminPassword" placeholder="Enter password">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="handleLogin()">Login to
+                    Dashboard</button>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="adminDashboard" style="display: none;">
+            <div class="section-header">
+                <h2>Administrative Control Panel</h2>
+                <p>Manage and resolve student complaints.</p>
+            </div>
+
+            <div class="card" style="padding: 0; overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f9fafb; border-bottom: 2px solid var(--border); text-align: left;">
+                            <th style="padding: 1.25rem;">Complaint ID</th>
+                            <th style="padding: 1.25rem;">Subject</th>
+                            <th style="padding: 1.25rem;">Student</th>
+                            <th style="padding: 1.25rem;">Category</th>
+                            <th style="padding: 1.25rem;">Status</th>
+                            <th style="padding: 1.25rem;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        <!-- Content via admin.js -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="admin.js"></script>
+</body>
+
+</html>

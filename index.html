@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Complaint Portal - Speak Up</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <span class="logo-icon"><i class="fas fa-check"></i></span>
+            Voice
+        </div>
+        <div class="nav-links">
+            <a href="#home" class="active">Home</a>
+            <a href="#report">Report Issue</a>
+            <a href="#tracking">Recent Feed</a>
+            <a href="#stats">Statistics</a>
+        </div>
+    </nav>
+
+    <main>
+        <div id="home" class="hero">
+            <h1>Better College, <span class="text-gradient">Together.</span></h1>
+            <p>A transparent and efficient way for students to report issues and track resolutions in real-time.</p>
+            <div class="hero-actions">
+                <a href="#report" class="btn btn-primary">Lodge a Complaint</a>
+                <a href="#tracking" class="btn btn-secondary">Check Progress</a>
+            </div>
+        </div>
+
+        <div id="report" class="section">
+            <div class="section-header">
+                <h2>Lodge a Complaint</h2>
+                <p>Provide details about the issue. Identity is optional.</p>
+            </div>
+            <div class="card complaint-form">
+                <form id="complaintForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" required>
+                                <option value="" disabled selected>Select Category</option>
+                                <option value="infrastructure">Infrastructure</option>
+                                <option value="academics">Academics</option>
+                                <option value="canteen">Canteen & Food</option>
+                                <option value="hostel">Hostel</option>
+                                <option value="others">Others</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority">Priority</label>
+                            <select id="priority" required>
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Explanation</label>
+                        <textarea id="description" rows="4" placeholder="..." required></textarea>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <span>Submit Anonymously?</span>
+                        <label class="switch">
+                            <input type="checkbox" id="anonymousToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group" id="userDetails">
+                        <label for="studentName">Your Name</label>
+                        <input type="text" id="studentName">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Complaint</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="tracking" class="section">
+            <div class="section-header">
+                <h2>Recent Complaints</h2>
+                <p>See what's happening and support common issues.</p>
+            </div>
+            <div class="complaints-list" id="complaintsList">
+                <!-- Data from localStorage -->
+            </div>
+        </div>
+
+        <div id="stats" class="section">
+            <div class="card stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalComplaints">0</div>
+                    <div class="stat-label">Total lodged</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="resolvedComplaints">0%</div>
+                    <div class="stat-label">Resolved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgTime">--</div>
+                    <div class="stat-label">Avg. Response</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Voice College Complaint Portal. Built for Transparency.</p>
+        </footer>
+
+        <script type="module" src="script.js"></script>
+</body>
+
+</html>
