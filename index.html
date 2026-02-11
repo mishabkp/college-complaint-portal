@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Complaint Portal - Speak Up</title>
+    <title>Student Support - College Complaint Portal</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,113 +14,223 @@
 </head>
 
 <body>
-    <nav>
-        <div class="logo">
-            <span class="logo-icon"><i class="fas fa-check"></i></span>
-            Voice
-        </div>
-        <div class="nav-links">
-            <a href="#home" class="active">Home</a>
-            <a href="#report">Report Issue</a>
-            <a href="#tracking">Recent Feed</a>
-            <a href="#stats">Statistics</a>
-        </div>
-    </nav>
-
-    <main>
-        <div id="home" class="hero">
-            <h1>Better College, <span class="text-gradient">Together.</span></h1>
-            <p>A transparent and efficient way for students to report issues and track resolutions in real-time.</p>
-            <div class="hero-actions">
-                <a href="#report" class="btn btn-primary">Lodge a Complaint</a>
-                <a href="#tracking" class="btn btn-secondary">Check Progress</a>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <div>
+                    <div class="brand-name">Student Support</div>
+                    <div class="brand-sub">COLLEGE PORTAL</div>
+                </div>
             </div>
-        </div>
 
-        <div id="report" class="section">
-            <div class="section-header">
-                <h2>Lodge a Complaint</h2>
-                <p>Provide details about the issue. Identity is optional.</p>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-th-large"></i> Home
+                </a>
+                <a href="#" class="nav-item" data-section="my-complaints">
+                    <i class="fas fa-file-alt"></i> My Complaints
+                </a>
+                <a href="#" class="nav-item" data-section="new-complaint">
+                    <i class="fas fa-plus-circle"></i> New Complaint
+                </a>
+                <a href="#" class="nav-item" data-section="faq">
+                    <i class="fas fa-question-circle"></i> FAQ
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar"><i class="fas fa-user"></i></div>
+                    <div>
+                        <div class="user-name" id="sidebarUserName">Student</div>
+                        <div class="user-id">College Portal</div>
+                    </div>
+                    <i class="fas fa-sign-out-alt sidebar-logout-icon" title="Logout"></i>
+                </div>
             </div>
-            <div class="card complaint-form">
-                <form id="complaintForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="category">Category</label>
-                            <select id="category" required>
-                                <option value="" disabled selected>Select Category</option>
-                                <option value="infrastructure">Infrastructure</option>
-                                <option value="academics">Academics</option>
-                                <option value="canteen">Canteen & Food</option>
-                                <option value="hostel">Hostel</option>
-                                <option value="others">Others</option>
-                            </select>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-wrapper">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search complaints or help articles...">
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-btn" id="notifBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notif-dot"></span>
+                    </button>
+                    <button class="btn btn-primary" id="topSubmitBtn">
+                        <i class="fas fa-plus"></i> Submit New Complaint
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <div class="content-area" id="dashboardSection">
+                <div class="welcome-bar">
+                    <h1>Welcome back, <span class="text-gradient" id="welcomeName">Student</span></h1>
+                    <p>Track and manage your grievances efficiently through this dashboard.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-row">
+                    <div class="stat-card stat-pending">
+                        <div class="stat-header">
+                            <span class="stat-title">PENDING</span>
+                            <div class="stat-icon"><i class="far fa-clipboard"></i></div>
+                        </div>
+                        <div class="stat-value" id="pendingCount">0</div>
+                        <div class="stat-sub" id="pendingSub">+0 today</div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill pending-fill" id="pendingBar"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-progress">
+                        <div class="stat-header">
+                            <span class="stat-title">IN PROGRESS</span>
+                            <div class="stat-icon"><i class="fas fa-sync-alt"></i></div>
+                        </div>
+                        <div class="stat-value" id="progressCount">0</div>
+                        <div class="stat-sub" id="progressSub">Active</div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill progress-fill" id="progressBar"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-resolved">
+                        <div class="stat-header">
+                            <span class="stat-title">RESOLVED</span>
+                            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        </div>
+                        <div class="stat-value" id="resolvedCount">0</div>
+                        <div class="stat-sub" id="resolvedSub">this month</div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill resolved-fill" id="resolvedBar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complaints Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Recent Complaints</h3>
+                        <a href="#" class="view-all" id="viewAllBtn">View All</a>
+                    </div>
+                    <table class="complaints-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>CATEGORY</th>
+                                <th>SUBJECT</th>
+                                <th>DATE</th>
+                                <th>STATUS</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complaintsTableBody">
+                            <!-- Populated by script.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="info-row">
+                    <div class="info-card info-guidelines">
+                        <div class="info-icon"><i class="fas fa-book-open"></i></div>
+                        <div>
+                            <h4>How it works?</h4>
+                            <p>Learn about our grievance redressal process and timelines for different categories.</p>
+                            <a href="#" class="info-link">Read Guidelines <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="info-card info-emergency">
+                        <div class="info-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div>
+                            <h4>Emergency Support</h4>
+                            <p>For immediate safety concerns or critical infrastructure issues, contact us directly.</p>
+                            <span class="emergency-number">📞 College Admin Office</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Complaint Section (hidden by default) -->
+            <div class="content-area" id="newComplaintSection" style="display: none;">
+                <div class="welcome-bar">
+                    <h1>Lodge a <span class="text-gradient">Complaint</span></h1>
+                    <p>Provide details about the issue. Identity is optional.</p>
+                </div>
+                <div class="card complaint-form" style="max-width: 700px;">
+                    <form id="complaintForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <select id="category" required>
+                                    <option value="" disabled selected>Select Category</option>
+                                    <option value="Infrastructure">Infrastructure</option>
+                                    <option value="Academic">Academics</option>
+                                    <option value="Canteen">Canteen & Food</option>
+                                    <option value="Hostel">Hostel</option>
+                                    <option value="IT Services">IT Services</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="priority">Priority</label>
+                                <select id="priority" required>
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="priority">Priority</label>
-                            <select id="priority" required>
-                                <option value="low">Low</option>
-                                <option value="medium" selected>Medium</option>
-                                <option value="high">High</option>
-                            </select>
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" placeholder="Brief title of your complaint" required>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="subject">Subject</label>
-                        <input type="text" id="subject" placeholder="" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Explanation</label>
-                        <textarea id="description" rows="4" placeholder="..." required></textarea>
-                    </div>
-                    <div class="form-group toggle-group">
-                        <span>Submit Anonymously?</span>
-                        <label class="switch">
-                            <input type="checkbox" id="anonymousToggle">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="form-group" id="userDetails">
-                        <label for="studentName">Your Name</label>
-                        <input type="text" id="studentName">
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Complaint</button>
-                </form>
-            </div>
-        </div>
-
-        <div id="tracking" class="section">
-            <div class="section-header">
-                <h2>Recent Complaints</h2>
-                <p>See what's happening and support common issues.</p>
-            </div>
-            <div class="complaints-list" id="complaintsList">
-                <!-- Data from localStorage -->
-            </div>
-        </div>
-
-        <div id="stats" class="section">
-            <div class="card stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="totalComplaints">0</div>
-                    <div class="stat-label">Total lodged</div>
+                        <div class="form-group">
+                            <label for="description">Explanation</label>
+                            <textarea id="description" rows="4" placeholder="Describe the issue in detail..."
+                                required></textarea>
+                        </div>
+                        <div class="form-group toggle-group">
+                            <span>Submit Anonymously?</span>
+                            <label class="switch">
+                                <input type="checkbox" id="anonymousToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="form-group" id="userDetails">
+                            <label for="studentName">Your Name</label>
+                            <input type="text" id="studentName" placeholder="Enter your name">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Complaint</button>
+                    </form>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="resolvedComplaints">0%</div>
-                    <div class="stat-label">Resolved</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="avgTime">--</div>
-                    <div class="stat-label">Avg. Response</div>
+            </div>
+
+            <!-- Complaint Detail Modal -->
+            <div id="detailModal" class="modal">
+                <div class="modal-content" style="max-width: 550px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                        <h3 id="detailSubject">Complaint Details</h3>
+                        <button class="btn btn-secondary" onclick="closeDetail()" style="padding: 0.4rem 0.8rem;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="detailContent"></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <footer>
-            <p>&copy; 2026 Voice College Complaint Portal. Built for Transparency.</p>
-        </footer>
-
-        <script type="module" src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 
 </html>

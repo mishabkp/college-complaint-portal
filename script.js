@@ -1,4 +1,4 @@
-// Firebase Configuration (Provided by User)
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAYrLYN2Q9eZLNREG2dIwMHNJUU86lKioA",
     authDomain: "college-portal-8ab95.firebaseapp.com",
@@ -9,9 +9,8 @@ const firebaseConfig = {
     databaseURL: "https://college-portal-8ab95-default-rtdb.asia-southeast1.firebasedatabase.app/"
 };
 
-// Import Firebase (Loading from CDN)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -21,18 +20,59 @@ document.addEventListener('DOMContentLoaded', () => {
     let complaints = [];
 
     const complaintForm = document.getElementById('complaintForm');
-    const complaintsList = document.getElementById('complaintsList');
+    const tableBody = document.getElementById('complaintsTableBody');
     const anonymousToggle = document.getElementById('anonymousToggle');
     const userDetails = document.getElementById('userDetails');
 
-    // Toggle user details section
+    // --- SECTION NAVIGATION ---
+    const navItems = document.querySelectorAll('.nav-item');
+    const dashboardSection = document.getElementById('dashboardSection');
+    const newComplaintSection = document.getElementById('newComplaintSection');
+    const topSubmitBtn = document.getElementById('topSubmitBtn');
+
+    function showSection(section) {
+        dashboardSection.style.display = 'none';
+        newComplaintSection.style.display = 'none';
+
+        navItems.forEach(n => n.classList.remove('active'));
+
+        if (section === 'new-complaint') {
+            newComplaintSection.style.display = 'block';
+            document.querySelector('[data-section="new-complaint"]').classList.add('active');
+        } else {
+            dashboardSection.style.display = 'block';
+            document.querySelector('[data-section="dashboard"]').classList.add('active');
+        }
+    }
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = item.dataset.section;
+            showSection(section);
+        });
+    });
+
+    if (topSubmitBtn) {
+        topSubmitBtn.addEventListener('click', () => showSection('new-complaint'));
+    }
+
+    // --- ANONYMOUS TOGGLE ---
     if (anonymousToggle) {
         anonymousToggle.addEventListener('change', () => {
             userDetails.style.display = anonymousToggle.checked ? 'none' : 'flex';
         });
     }
 
-    // Real-time Database Sync
+    // --- SEARCH ---
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            renderTable();
+        });
+    }
+
+    // --- REALTIME SYNC ---
     onValue(complaintsRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
@@ -40,73 +80,143 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: key,
                 ...data[key]
             }));
-            // Sort by votes
-            complaints.sort((a, b) => (b.votes || 0) - (a.votes || 0));
+            complaints.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         } else {
             complaints = [];
         }
-        renderComplaints();
+        renderTable();
+        updateStats();
     });
 
-    function renderComplaints() {
-        if (!complaintsList) return;
-        complaintsList.innerHTML = '';
+    // --- RENDER TABLE ---
+    function renderTable() {
+        if (!tableBody) return;
+        tableBody.innerHTML = '';
 
-        if (complaints.length === 0) {
-            complaintsList.innerHTML = '<div style="text-align:center; padding: 2rem; color: var(--text-muted);">No complaints yet. Be the first to report!</div>';
+        let filtered = complaints;
+        const query = searchInput ? searchInput.value.toLowerCase() : '';
+        if (query) {
+            filtered = complaints.filter(c =>
+                (c.subject || '').toLowerCase().includes(query) ||
+                (c.category || '').toLowerCase().includes(query) ||
+                (c.user || '').toLowerCase().includes(query)
+            );
+        }
+
+        if (filtered.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-muted);">No complaints found.</td></tr>';
             return;
         }
 
-        complaints.forEach(c => {
-            const item = document.createElement('div');
-            item.className = 'complaint-item';
+        filtered.forEach(c => {
+            const row = document.createElement('tr');
+            const shortId = '#CMP-' + c.id.toString().slice(-4).toUpperCase();
+            const statusLabel = getStatusLabel(c.status);
+            const statusClass = getStatusClass(c.status);
 
-            const statusClass = `status-${c.status}`;
-            const statusLabel = c.status.charAt(0).toUpperCase() + c.status.slice(1);
-
-            item.innerHTML = `
-                <div class="vote-control">
-                    <button class="vote-btn" onclick="handleVote('${c.id}')">
-                        <i class="fas fa-chevron-up"></i>
-                        <span>${c.votes || 0}</span>
-                    </button>
-                </div>
-                <div class="complaint-info">
-                    <h4>${c.subject}</h4>
-                    <div class="complaint-meta">
-                        <span><i class="far fa-user"></i> ${c.user}</span>
-                        <span><i class="far fa-folder"></i> ${c.category}</span>
-                        <span><i class="far fa-calendar"></i> ${c.date}</span>
-                    </div>
-                    ${c.reply ? `
-                        <div class="admin-reply">
-                            <i class="fas fa-reply fa-rotate-180"></i>
-                            <div class="reply-content">
-                                <strong>System Response:</strong> ${c.reply}
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
-                <div class="status-badge ${statusClass}">${statusLabel}</div>
+            row.innerHTML = `
+                <td><span class="complaint-id">${shortId}</span></td>
+                <td>${c.category || 'General'}</td>
+                <td>
+                    <span class="complaint-subject-text">${c.subject}</span>
+                    ${c.reply ? `<div class="admin-reply" style="margin-top: 6px; padding: 0.5rem 0.75rem; font-size: 0.75rem;"><i class="fas fa-reply fa-rotate-180" style="font-size: 0.65rem;"></i><div class="reply-content"><strong>System Response:</strong> ${c.reply}</div></div>` : ''}
+                </td>
+                <td style="white-space: nowrap;">${c.date || '—'}</td>
+                <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+                <td><button class="view-btn" onclick="viewDetail('${c.id}')" title="View Details"><i class="fas fa-eye"></i></button></td>
             `;
-            complaintsList.appendChild(item);
+            tableBody.appendChild(row);
         });
-        updateStats();
     }
 
-    function updateStats() {
-        const totalElem = document.getElementById('totalComplaints');
-        const resolvedElem = document.getElementById('resolvedComplaints');
-
-        if (totalElem) totalElem.innerText = complaints.length;
-        if (resolvedElem) {
-            const resolvedCount = complaints.filter(c => c.status === 'resolved').length;
-            const percentage = complaints.length > 0 ? Math.round((resolvedCount / complaints.length) * 100) : 0;
-            resolvedElem.innerText = percentage + '%';
+    function getStatusLabel(status) {
+        switch (status) {
+            case 'received': return 'PENDING';
+            case 'review': return 'IN PROGRESS';
+            case 'resolved': return 'RESOLVED';
+            default: return status ? status.toUpperCase() : 'PENDING';
         }
     }
 
-    // Handle Voting (Cloud Update)
+    function getStatusClass(status) {
+        switch (status) {
+            case 'received': return 'status-received';
+            case 'review': return 'status-review';
+            case 'resolved': return 'status-resolved';
+            default: return 'status-received';
+        }
+    }
+
+    // --- UPDATE STATS ---
+    function updateStats() {
+        const pending = complaints.filter(c => c.status === 'received').length;
+        const inProgress = complaints.filter(c => c.status === 'review').length;
+        const resolved = complaints.filter(c => c.status === 'resolved').length;
+        const total = complaints.length || 1;
+
+        const el = (id) => document.getElementById(id);
+
+        if (el('pendingCount')) el('pendingCount').innerText = String(pending).padStart(2, '0');
+        if (el('progressCount')) el('progressCount').innerText = String(inProgress).padStart(2, '0');
+        if (el('resolvedCount')) el('resolvedCount').innerText = String(resolved).padStart(2, '0');
+
+        if (el('pendingSub')) el('pendingSub').innerText = `${pending} active`;
+        if (el('progressSub')) el('progressSub').innerText = inProgress > 0 ? 'Active' : 'None';
+        if (el('resolvedSub')) el('resolvedSub').innerText = `+${resolved} resolved`;
+
+        if (el('pendingBar')) el('pendingBar').style.width = (pending / total * 100) + '%';
+        if (el('progressBar')) el('progressBar').style.width = (inProgress / total * 100) + '%';
+        if (el('resolvedBar')) el('resolvedBar').style.width = (resolved / total * 100) + '%';
+    }
+
+    // --- VIEW DETAIL ---
+    window.viewDetail = (id) => {
+        const c = complaints.find(comp => comp.id === id);
+        if (!c) return;
+
+        document.getElementById('detailSubject').innerText = c.subject;
+        document.getElementById('detailContent').innerHTML = `
+            <div style="display: grid; gap: 1rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 2px;">Category</div>
+                        <div style="font-weight: 600;">${c.category}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 2px;">Priority</div>
+                        <div style="font-weight: 600; text-transform: capitalize;">${c.priority || 'Medium'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 2px;">Status</div>
+                        <span class="status-badge ${getStatusClass(c.status)}">${getStatusLabel(c.status)}</span>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 2px;">Reported By</div>
+                        <div style="font-weight: 600;">${c.user}</div>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Description</div>
+                    <div style="background: var(--bg-light); padding: 1rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.6;">${c.description || 'No description provided.'}</div>
+                </div>
+                ${c.reply ? `
+                    <div class="admin-reply">
+                        <i class="fas fa-reply fa-rotate-180"></i>
+                        <div class="reply-content">
+                            <strong>System Response:</strong> ${c.reply}
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        document.getElementById('detailModal').style.display = 'flex';
+    };
+
+    window.closeDetail = () => {
+        document.getElementById('detailModal').style.display = 'none';
+    };
+
+    // --- VOTING (via detail modal or future feature) ---
     window.handleVote = (id) => {
         const c = complaints.find(comp => comp.id === id);
         if (c) {
@@ -116,12 +226,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Form Submission (Cloud Save)
+    // --- FORM SUBMISSION ---
     if (complaintForm) {
         complaintForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const btn = complaintForm.querySelector('button');
+            const btn = complaintForm.querySelector('button[type="submit"]');
             const originalText = btn.innerText;
 
             const newC = {
@@ -151,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.style.background = "";
                     btn.disabled = false;
                     complaintForm.reset();
-                    document.getElementById('tracking').scrollIntoView({ behavior: 'smooth' });
+                    showSection('dashboard');
                 }, 1500);
             } catch (error) {
                 console.error("Firebase Error: ", error);
